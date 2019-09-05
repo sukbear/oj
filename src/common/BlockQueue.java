@@ -15,9 +15,14 @@ import java.util.concurrent.locks.ReentrantLock;
 public class BlockQueue<T> {
     private List<T> container = new ArrayList<>();
     private int count;
+    private  int capacity;
     private Lock lock = new ReentrantLock();
-    private Condition NULL = lock.newCondition();
+    private Condition EMPTY = lock.newCondition();
     private Condition FULL = lock.newCondition();
+
+    public BlockQueue( int capacity){
+        this.capacity = capacity;
+    }
 
     public void add(T t) throws InterruptedException {
         if (t == null) {
@@ -25,9 +30,18 @@ public class BlockQueue<T> {
         }
         lock.lockInterruptibly();
         try {
+            try{
+                while(count==capacity){
+                    FULL.await();
+                }
+            }catch (InterruptedException e){
+                FULL.signal();
+                throw e;
+            }
             container.add(t);
+            System.out.println(t);
             ++count;
-            NULL.signal();
+            EMPTY.signal();
         } finally {
             lock.unlock();
         }
@@ -38,14 +52,15 @@ public class BlockQueue<T> {
         try {
             try {
                 while (count == 0) {
-                    NULL.await();
+                    EMPTY.await();
                 }
             } catch (InterruptedException e) {
-                NULL.signal();
+                EMPTY.signal();
                 throw e;
             }
             --count;
             T t = container.remove(0);
+            System.out.println(t.toString());
             FULL.signal();
             return t;
         } finally {
@@ -53,4 +68,28 @@ public class BlockQueue<T> {
         }
     }
 
+    public static void main(String[] args){
+        BlockQueue<Double> blockQueue = new BlockQueue<>(5);
+
+        new Thread(()->{
+            try {
+                while(true){
+                blockQueue.add(Math.random()*10);
+                Thread.sleep((long)(Math.random()*1000));
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
+
+       new Thread(()->{
+            try {
+                while(true){
+                    blockQueue.take();
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
 }

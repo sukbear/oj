@@ -1,50 +1,126 @@
 package common.LRU;
 
-import java.time.Instant;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
-/**
+/***
+ *@ClassName LRUCache
+ *@Description
  * @author sukbear
- * @create 2018-12-16 14:22
+ * @create 2019-08-06 15:55g
  */
-public class LRUCache<K,V> extends LinkedHashMap<K,V>{
-    private int cacheSize;
-    private HashMap<K,Long> map = new HashMap<>();
+public class LRUCache<K, V> {
+    public static void main(String[] args) {
+        LRUCache<String, String> lruCache = new LRUCache<>(2);
+        lruCache.put("df", "df");
+        lruCache.put("dfdd", "fdd");
+        lruCache.put("dffd", "ef");
+        System.out.println(lruCache.get("df"));
+    }
+
+    private int MAX_CACHE_SIZE;
+    private Entry first;
+    private Entry last;
+    private HashMap<K, Entry<K, V>> map = new HashMap<>();
+
     public LRUCache(int cacheSize) {
-        super(16,0.75F, true);
-        this.cacheSize = cacheSize;
-    }
-    @Override
-    protected boolean removeEldestEntry(Map.Entry<K, V> eldest) {
-        return size()>this.cacheSize;
+        this.MAX_CACHE_SIZE = cacheSize;
+        map = new HashMap<>(cacheSize);
     }
 
-    @Override
-    public V put(K key, V value) {
-        return super.put(key, value);
+    public void put(K key, V value) {
+        Entry entry = getEntry(key);
+        if (entry == null) {
+
+            if (map.size() >= MAX_CACHE_SIZE) {
+                map.remove(last.key);
+                removeLast();
+            }
+            entry = new Entry();
+            entry.key = key;
+        }
+        entry.vlaue = value;
+        moveToFirst(entry);
+        map.put(key, entry);
     }
 
+    public V get(K key) {
+        Entry<K, V> entry = map.get(key);
+        if (entry == null) {
+            return null;
+        }
+        moveToFirst(entry);
+        return entry.vlaue;
+    }
 
-    private class ChcheData<T>{
-        private T data;
-        private long saveTime; // 存活时间
-        private long expire;   // 过期时间 小于等于0标识永久存活
+    public void remove(K key) {
+        Entry entry = map.get(key);
+        // 在链表中删除
+        if (entry != null) {
+            if (entry.pre != null) {
+                entry.pre.next = entry.next;
+            }
+            if (entry.next != null) {
+                entry.next.pre = entry.pre;
+            }
+            if (entry == first) {
+                first = entry.next;
+            }
+            if (entry == last) {
+                last = entry.pre;
+            }
+        }
+        //map中删除
+        map.remove(key);
 
-        public ChcheData(T data, long saveTime, long expire) {
-            this.data = data;
-            this.saveTime = Instant.now().toEpochMilli();
-            this.expire = saveTime+expire;
+    }
+
+    private void moveToFirst(Entry entry) {
+        //第一个直接返回
+        if (entry == first) {
+            return;
         }
-        T getData(){
-            return data;
+        if (entry.pre != null) {
+            entry.pre.next = entry.next;
         }
-        long getExpire(){
-            return expire;
+        if (entry.next != null) {
+            entry.next.pre = entry.pre;
         }
-        long getSaveTime(){
-            return saveTime;
+        if (entry == last) {
+            last = entry.pre;
         }
+        //只有一个元素
+        if (first == null || last == null) {
+            first = last = entry;
+            return;
+        }
+        entry.next = first;
+        first.pre = entry;
+        first = entry;
+        entry.pre = null;
+    }
+
+    private void removeLast() {
+        if (last != null) {
+            //元素个数超过1个时
+            if (last.pre != null) {
+                last.pre.next = null;
+            } else {
+                // 删完不存在结点时
+                first = null;
+            }
+            last = last.pre;
+        }
+
+    }
+
+    private Entry<K, V> getEntry(K key) {
+        return map.get(key);
+    }
+
+    class Entry<K, V> {
+        Entry pre;
+        Entry next;
+        K key;
+        V vlaue;
     }
 }

@@ -47,8 +47,9 @@ public class ListReverse {
     static Node reverse(Node head) {
         Node p = head;
         Node pre = null;
+        Node temp;
         while(p!=null){
-            Node temp = p.next;
+            temp = p.next;
             p.next = pre;
             pre = p;
             p = temp;
@@ -56,7 +57,17 @@ public class ListReverse {
         return pre;
     }
 
-
+    static ListNode reverseList(ListNode head){
+        ListNode p = head;
+        ListNode pre = null;
+        while(p!=null){
+            ListNode tmp = p.next;
+            p.next = pre;
+            pre = p;
+            p = tmp;
+        }
+        return pre;
+    }
     class ListNode {
         int val;
         ListNode next;
