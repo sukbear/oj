@@ -12,7 +12,7 @@ public class MergeSort {
     public int[] sort(int[] source) {
         // 对 arr 进行拷贝，不改变参数内容
         int[] arr = Arrays.copyOf(source, source.length);
-        if (arr.length < 2) {
+            if (arr.length < 2) {
             return arr;
         }
         int mid = (int) Math.floor(arr.length / 2);

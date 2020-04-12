@@ -3,8 +3,6 @@ package util;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /***
  *@ClassName SimpleDateFormat_
@@ -52,7 +50,6 @@ public class SimpleDateFormat_ {
     }
 
     public static void main(String[] args) {
-        ExecutorService pool = Executors.newSingleThreadExecutor();
 
     }
 

@@ -141,7 +141,6 @@ ListNode intersectList(ListNode head1,ListNode head2){
         h.next = i;
         i.next = d;
         LinkedListRing llr = new LinkedListRing();
-
      System.out.println(llr.intersectList(a,h).val);
     }
 }

@@ -19,8 +19,8 @@ public class Kmp {
         while (i < s1.length() && j < s2.length()) {
             if (str1[i] == str2[j]) {
                 i++;
-                j++;
-            }
+            j++;
+        }
             // j第一个位置
             else if (next[j] == -1) {
                 i++;

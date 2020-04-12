@@ -77,9 +77,9 @@ public class TopK {
      */
     public int[] pqGetTopK(int[] input, int k) {
         int[] res = new int[k];
-        PriorityQueue<Integer> maxQueue = new PriorityQueue<>(k);
+        PriorityQueue<Integer> maxQueue = new PriorityQueue<>(k,(e1,e2)-> e2- e1);
         for (int num : input) {
-            if (maxQueue.size() < k || maxQueue.peek() < num) {
+            if (maxQueue.size() < k || maxQueue.peek() > num) {
                 maxQueue.offer(num);
             }
             if (maxQueue.size() > k) {
@@ -96,7 +96,7 @@ public class TopK {
     public static void main(String[] args) {
         TopK obj = new TopK();
         int[] a = {300, 40, 10, 10, 30, 60, 100, 44, 10, 50, 104};
-        for(Integer s: obj.getTopK(a,4)){
+        for(Integer s: obj.pqGetTopK(a,4)){
             System.out.println(s);
         }
     }

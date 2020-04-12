@@ -11,31 +11,28 @@ public class Main {
      * 1、只有当count为0时，await之后的程序才够执行
      * 2、countDown必须写在finally中，防止发生异程常时，导致程序死锁。
      */
-    static CountDownLatch cdl = new CountDownLatch(1);
+    static final int  threadCount = 550;
 
     public static void main(String[] args) {
-        ExecutorService execute = new ThreadPoolExecutor(2, 5, 2, TimeUnit.SECONDS, new ArrayBlockingQueue<>(10), new ThreadPoolExecutor.AbortPolicy());
-        execute.execute(() -> {
-            try {
-                Thread.sleep(1000);
-                System.out.println("A");
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } finally {
-                cdl.countDown();
-            }
-        });
+        ExecutorService execute = Executors.newFixedThreadPool(300);
+        final CountDownLatch cdl = new CountDownLatch(threadCount);
 
-        execute.execute(() -> {
-            try {
-                cdl.await();
-                Thread.sleep(800);
-                System.out.println("B");
-
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        });
-        execute.shutdown();
+        for(int i = 0;i<threadCount;i++){
+            final int threadNum =i;
+            execute.execute(()->{
+                try {
+                    test(threadNum);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }finally {
+                    cdl.countDown();
+                }
+            });
+        }
+    }
+    public static void test(int threadnum) throws InterruptedException {
+        Thread.sleep(1000);// 模拟请求的耗时操作
+        System.out.println("threadnum:" + threadnum);
+        Thread.sleep(1000);// 模拟请求的耗时操作
     }
 }

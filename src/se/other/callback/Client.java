@@ -25,11 +25,11 @@ public class Client implements ProcessCallBack {
     }
     public void doSomething(){
         System.out.println("客户端处理其他事情");
-        try {
+      /*  try {
             TimeUnit.SECONDS.sleep(2);
         } catch (InterruptedException e) {
             e.printStackTrace();
-        }
+        }*/
         System.out.println("客户端其他处理完了");
     }
     @Override

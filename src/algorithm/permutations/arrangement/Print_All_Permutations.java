@@ -57,7 +57,7 @@ public class Print_All_Permutations {
         chs[j]=temp;
     }
     public static void main(String[] args) {
-        String test1 = "acc";
+        String test1 = "ccc";
         //printAllPermutations(test1);
         System.out.println("================");
         printAllPermutations2(test1);

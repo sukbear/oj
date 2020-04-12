@@ -9,6 +9,7 @@ import java.util.concurrent.TimeUnit;
 public class Server {
     public void getClientMsg(ProcessCallBack callBack,String msg){
         System.out.println("服务端： 服务端收到的消息为: "+msg);
+        System.out.println("服务端开始处理。。。");
         try {
             TimeUnit.SECONDS.sleep(5);
         } catch (InterruptedException e) {
